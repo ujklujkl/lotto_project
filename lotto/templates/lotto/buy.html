@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로또 번호 발급</title>
+</head>
+<body>
+    <h1>6/45 로또 번호 발급</h1>
+    <p>이번에 구매하시면 <strong>제 {{ next_round_number }}회차</strong>로 등록됩니다.</p>
+
+    {% if error %}
+        <p style="color: red; font-weight: bold;">{{ error }}</p>
+    {% endif %}
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>발급 방식 선택: </label>
+        <select name="selection_type" id="selection_type" onchange="toggleManualInputs()">
+            <option value="AUTO">자동 번호 생성 (랜덤)</option>
+            <option value="MANUAL">수동 번호 직접 입력</option>
+        </select>
+        <br><br>
+
+        <div id="manual_inputs" style="display: none;">
+            <p>1~45 사이의 중복되지 않는 숫자 6개를 입력하세요:</p>
+            <input type="number" name="num_1" min="1" max="45" style="width: 50px;">
+            <input type="number" name="num_2" min="1" max="45" style="width: 50px;">
+            <input type="number" name="num_3" min="1" max="45" style="width: 50px;">
+            <input type="number" name="num_4" min="1" max="45" style="width: 50px;">
+            <input type="number" name="num_5" min="1" max="45" style="width: 50px;">
+            <input type="number" name="num_6" min="1" max="45" style="width: 50px;">
+            <br><br>
+        </div>
+
+        <button type="submit" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+            복권 구매 및 회차 발행
+        </button>
+    </form>
+
+    <br>
+    <a href="{% url 'history' %}">회차별 당첨 확인하러 가기</a>
+
+    <script>
+        function toggleManualInputs() {
+            var type = document.getElementById("selection_type").value;
+            var inputs = document.getElementById("manual_inputs");
+            inputs.style.display = (type === "MANUAL") ? "block" : "none";
+        }
+    </script>
+</body>
+</html>

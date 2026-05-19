@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회차별 당첨 확인</title>
+</head>
+<body>
+    <h1>회차별 당첨 확인 및 번호 비교</h1>
+    <a href="{% url 'buy' %}">🔙 새로운 복권 구매하러 가기</a>
+    <hr>
+
+    <form method="GET" action="">
+        <label style="font-size: 16px; font-weight: bold;">조회할 회차 선택: </label>
+        <select name="search_round" onchange="this.form.submit()" style="padding: 5px; font-size: 14px;">
+            <option value="">-- 회차를 선택하세요 --</option>
+            {% for r in all_rounds %}
+                <option value="{{ r.round_number }}" {% if search_round == r.round_number|stringformat:"i" %}selected{% endif %}>
+                    제 {{ r.round_number }}회차
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <br><br>
+
+    {% if selected_round %}
+        <h2>제 {{ selected_round.round_number }}회차 대조 결과</h2>
+        
+        <table border="1" cellpadding="12" cellspacing="0" style="border-collapse: collapse; width: 600px;">
+            <tr style="background-color: #f9f9f9;">
+                <th width="30%">구분</th>
+                <th width="70%">로또 번호</th>
+            </tr>
+            <tr>
+                <td><strong>내가 구매한 번호</strong></td>
+                <td>
+                    {% if purchase_info %}
+                        <span style="font-size: 16px; color: #0056b3;">
+                            {{ purchase_info.num1 }}, {{ purchase_info.num2 }}, {{ purchase_info.num3 }}, 
+                            {{ purchase_info.num4 }}, {{ purchase_info.num5 }}, {{ purchase_info.num6 }}
+                        </span>
+                        ({{ purchase_info.get_selection_type_display }})
+                    {% else %}
+                        <span style="color: red;">이 회차에 구매한 내역이 없습니다.</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td><strong>해당 회차 당첨 번호</strong></td>
+                <td>
+                    <span style="font-size: 16px; color: #28a745; font-weight: bold;">
+                        {{ draw_info.win1 }}, {{ draw_info.win2 }}, {{ draw_info.win3 }}, 
+                        {{ draw_info.win4 }}, {{ draw_info.win5 }}, {{ draw_info.win6 }}
+                    </span>
+                    | 보너스: <span style="color: #ffc107; font-weight: bold;">{{ draw_info.bonus }}</span>
+                </td>
+            </tr>
+            <tr style="background-color: #fff3cd;">
+                <td><strong>당첨 결과</strong></td>
+                <td>
+                    {% if purchase_info %}
+                        <strong style="font-size: 18px; color: #d9534f;">{{ rank_result }}</strong>
+                    {% else %}
+                        <span style="color: gray;">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    {% else %}
+        <p style="color: gray; font-style: italic;">조회하려는 회차를 위 상자에서 선택해 주세요.</p>
+    {% endif %}
+
+</body>
+</html>
