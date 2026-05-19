@@ -1,6 +1,21 @@
-version: '3.8'
-
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: lotto_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=lottodb
+      - POSTGRES_USER=lotto_user
+      - POSTGRES_PASSWORD=lotto_password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lotto_user -d lottodb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
     container_name: lotto_web
@@ -9,7 +24,19 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DEBUG=True
+      - DB_HOST=db
+      - DB_NAME=lottodb
+      - DB_USER=lotto_user
+      - DB_PASSWORD=lotto_password
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=admin
+      - DJANGO_SUPERUSER_EMAIL=
+    depends_on:
+      db:
+        condition: service_healthy
     command: >
       sh -c "python manage.py migrate &&
+             python manage.py createsuperuser --noinput || true &&
              gunicorn --bind 0.0.0.0:8000 lotto_project.wsgi:application"
+volumes:
+  postgres_data:

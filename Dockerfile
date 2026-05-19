@@ -4,10 +4,11 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
-RUN pip install django==6.0.4 gunicorn
+RUN pip install django==6.0.4 gunicorn psycopg2-binary
 
 COPY . /app/
 
