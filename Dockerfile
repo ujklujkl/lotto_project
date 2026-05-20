@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
-RUN pip install django==6.0.4 gunicorn psycopg2-binary
+RUN pip install django==6.0.4 psycopg2-binary
 
 COPY . /app/
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "lotto_project.wsgi:application"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
