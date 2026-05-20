@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class LottoRound(models.Model):
-    """로또 회차 정보"""
+    
     round_number = models.PositiveIntegerField(unique=True, verbose_name="회차")
     is_drawn = models.BooleanField(default=False, verbose_name="추첨 완료 여부")
     created_at = models.DateTimeField(auto_now_add=True)

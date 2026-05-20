@@ -1,13 +1,9 @@
 import random
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
 from .models import LottoRound, LottoPurchase, LottoWinDraw
 
 def buy_lotto(request):
-    """
-    [복권 구매 화면]
-    사용자가 방문하면 현재 생성될 회차가 몇 회차인지 보여주고, 구매 버튼을 누르면 새로운 회차를 생성하며 복권을 저장한 뒤 결과 페이지로 이동합니다.
-    """
+    
     last_round = LottoRound.objects.order_by('-round_number').first()
     next_round_number = (last_round.round_number + 1) if last_round else 1
 
@@ -30,9 +26,7 @@ def buy_lotto(request):
 
         new_round = LottoRound.objects.create(round_number=next_round_number, is_drawn=False)
 
-        dummy_user, _ = User.objects.get_or_create(username='lotto_guest')
         LottoPurchase.objects.create(
-            user=dummy_user,
             lotto_round=new_round,
             num1=numbers[0], num2=numbers[1], num3=numbers[2],
             num4=numbers[3], num5=numbers[4], num6=numbers[5],
@@ -44,10 +38,7 @@ def buy_lotto(request):
 
 
 def my_lotto_history(request):
-    """
-    [당첨 확인 및 회차 선택 화면]
-    사용자가 특정 회차를 선택하면, 해당 회차의 당첨 번호가 아직 없을 경우 그 자리에서 당첨 번호를 무작위 추첨(확정)한 뒤 일치 여부를 비교해 등수를 보여줍니다.
-    """
+    
     search_round_str = request.GET.get('search_round')
     all_rounds = LottoRound.objects.order_by('-round_number')
     
