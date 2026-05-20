@@ -1,5 +1,6 @@
 import random
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from .models import LottoRound, LottoPurchase, LottoWinDraw
 
 def buy_lotto(request):
@@ -25,8 +26,10 @@ def buy_lotto(request):
                 return render(request, 'lotto/buy.html', { 'error': '6개의 숫자를 모두 올바르게 입력해야 합니다.', 'next_round_number': next_round_number})
 
         new_round = LottoRound.objects.create(round_number=next_round_number, is_drawn=False)
+        dummy_user, _ = User.objects.get_or_create(username='lotto_guest')
 
         LottoPurchase.objects.create(
+            user=dummy_user,
             lotto_round=new_round,
             num1=numbers[0], num2=numbers[1], num3=numbers[2],
             num4=numbers[3], num5=numbers[4], num6=numbers[5],
